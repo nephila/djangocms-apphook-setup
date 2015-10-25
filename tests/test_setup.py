@@ -31,6 +31,8 @@ class SetupAppBaseTest(BaseTest):
             'tests.sample_app_3.cms_app',
             'tests.sample_app_4',
             'tests.sample_app_4.cms_app',
+            'tests.sample_app_5',
+            'tests.sample_app_5.cms_app',
         ]
         for module in delete:
             if module in sys.modules:
@@ -152,3 +154,20 @@ class SetupApp4Test(SetupAppBaseTest):
         self.assertTrue(config.random_option)
         config.set_current_language('en')
         self.assertEqual(config.object_name, 'name')
+
+
+class SetupApp5Test(SetupAppBaseTest):
+    module = 'tests.sample_app_5'
+    app_name = 'App5'
+
+    def test_setup_empty(self):
+        # Tests starts with no page and no config
+        self.assertFalse(Page.objects.exists())
+        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 0)
+
+        # importing cms_app triggers the auto setup
+        __import__(self.module, fromlist=(str('cms_app'),))
+
+        # No setup is performed
+        self.assertEqual(Page.objects.count(), 0)
+        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 0)

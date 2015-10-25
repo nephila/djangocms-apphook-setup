@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
+import warnings
 
 
 class AutoCMSAppMixin(object):
@@ -75,7 +76,17 @@ class AutoCMSAppMixin(object):
     def setup(cls):
         from cms.models import Page
 
-        if cls.auto_setup and cls.auto_setup['enabled']:
+        if cls.auto_setup and cls.auto_setup.get('enabled', False):
+            if not cls.auto_setup.get('home title', False):
+                warnings.warn('"home title" is not set in {0}.auto_setup attribute'.format(cls))
+                return
+            if not cls.auto_setup.get('page title', False):
+                warnings.warn('"page title" is not set in {0}.auto_setup attribute'.format(cls))
+                return
+            if cls.app_name and not cls.auto_setup.get('namespace', False):
+                warnings.warn('"page title" is not set in {0}.auto_setup attribute'.format(cls))
+                return
+
             if getattr(cls, 'app_config', False):
                 configs = cls.app_config.objects.all()
                 if not configs.exists():
