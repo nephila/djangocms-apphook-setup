@@ -59,9 +59,9 @@ The setup function included here does the following:
 * If it is, it skips any further step
 * If not:
 
-   * Creates the home page (if not present)
-   * Creates a sub page of the home
-   * Adds the application Apphook to it
+  * Creates the home page (if not present)
+  * Creates a sub page of the home
+  * Adds the application Apphook to it
 
 In case the application uses ``aldryn-apphooks-config``, a Apphook Config instance is created
 and added to the application page together with the Apphook.
@@ -99,21 +99,18 @@ The behavior of the setup function can be customized by setting the following ke
 ``auto_setup`` attribute:
 
 * ``enabled``: If ``True`` the setup is invoked; a good option is to use a setting to control this
-               to allow application users to disable the behavior (default: ``True``)
-* ``home title``: Title of the home page if created by the setup function; this *must** be set in
-                  the application ``CMSApp``, otherwise the setup function will exit
-                  with a warning.
-* ``page title``: Title of the page created by the setup function; this *must** be set in
-                  the application ``CMSApp``, otherwise the setup function will exit
-                  with a warning.
-* ``namespace``: Application instance name used when attaching the Apphook; this *must** be set in
-                 the application ``CMSApp`` if an ``app_name`` is defined,
-                 otherwise the setup function will exit with a warning.
+  to allow application users to disable the behavior (default: ``True``)
+* ``home title``: Title of the home page if created by the setup function; this **must** be set in
+  the application ``CMSApp``, otherwise the setup function will exit with a warning.
+* ``page title``: Title of the page created by the setup function; this **must** be set in
+  the application ``CMSApp``, otherwise the setup function will exit with a warning.
+* ``namespace``: Application instance name used when attaching the Apphook; this **must** be set in
+  the application ``CMSApp`` if an ``app_name`` is defined, otherwise the setup function will exit
+  with a warning.
 * ``config_fields``: Fields used when creating the ApphookConfigModel instance; use this attribute
-                     for non-translated fields.
+  for non-translated fields.
 * ``config_translated_fields``: Fields used when creating the ApphookConfigModel instance;
-                                use this attribute for translated fields (currently only
-                                ``django-parler`` is supported).
+  use this attribute for translated fields (currently only ``django-parler`` is supported).
 
 
 Notes on testing
