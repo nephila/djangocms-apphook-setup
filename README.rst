@@ -42,3 +42,99 @@ Supported django CMS versions:
 
 * django CMS 3.x
 
+Features
+--------
+
+The mixin included in this utility allows to automatically add an Apphook to a django CMS
+project on the first access to the website.
+
+This is intended for use by the django CMS application developers by extending their own
+``CMSApp`` classes.
+
+This behavior simplify the initial setup of a project and lower the barrier for the end user.
+
+The setup function included here does the following:
+
+* Check if the Apphook is already added to a CMS page
+* If it is, it skips any further step
+* If not:
+
+   * Creates the home page (if not present)
+   * Creates a sub page of the home
+   * Adds the application Apphook to it
+
+In case the application uses ``aldryn-apphooks-config``, a Apphook Config instance is created
+and added to the application page together with the Apphook.
+
+Usage
+-----
+
+This utility can be used by extending the ``CMSApp`` class, adding the ``auto_setup`` attribute
+with relevant configuration options and triggering setup at the end of ``cms_app.py``::
+
+
+    class App4(AutoCMSAppMixin, CMSConfigApp):
+        name = _('App4')
+        urls = ['sample_app_4.urls']
+        app_name = 'app4'
+        app_config = App4Config
+        # djangocms-apphook-setup attribute
+        auto_setup = {
+            'enabled': True,
+            'home title': 'home title',
+            'page title': 'page 4 title',
+            'namespace': 'namespace',
+            'config_fields': {'random_option': True},
+            'config_translated_fields': {'app_title': 'app title', 'object_name': 'name'},
+        }
+
+    apphook_pool.register(App4)
+    # trigger djangocms-apphook-setup function
+    App4.setup()
+
+Configuration options
+---------------------
+
+The behavior of the setup function can be customized by setting the following keys in the
+``auto_setup`` attribute:
+
+* ``enabled``: If ``True`` the setup is invoked; a good option is to use a setting to control this
+               to allow application users to disable the behavior (default: ``True``)
+* ``home title``: Title of the home page if created by the setup function; this *must** be set in
+                  the application ``CMSApp``, otherwise the setup function will exit
+                  with a warning.
+* ``page title``: Title of the page created by the setup function; this *must** be set in
+                  the application ``CMSApp``, otherwise the setup function will exit
+                  with a warning.
+* ``namespace``: Application instance name used when attaching the Apphook; this *must** be set in
+                 the application ``CMSApp`` if an ``app_name`` is defined,
+                 otherwise the setup function will exit with a warning.
+* ``config_fields``: Fields used when creating the ApphookConfigModel instance; use this attribute
+                     for non-translated fields.
+* ``config_translated_fields``: Fields used when creating the ApphookConfigModel instance;
+                                use this attribute for translated fields (currently only
+                                ``django-parler`` is supported).
+
+
+Notes on testing
+----------------
+
+As this utility works by triggering setup function at import time, extra steps must be taken
+in the tests to unload the modules between the tests (this is only needed when testing the setup).
+
+Example cleanup to be included in ``setUp`` method::
+
+    def setUp(self):
+        super(SetupAppBaseTest, self).setUp()
+        from cms.apphook_pool import apphook_pool
+
+        delete = [
+            'my_app',
+            'my_app.cms_app',
+        ]
+        for module in delete:
+            if module in sys.modules:
+                del sys.modules[module]
+        MyApphoolConfigModel.cmsapp = None
+        apphook_pool.clear()
+
