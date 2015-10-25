@@ -31,7 +31,7 @@ setup(
     ],
     license='BSD',
     zip_safe=False,
-    keywords='djangocms-apphook-setup, blog, django, wordpress, multilingual',
+    keywords='djangocms-apphook-setup, django CMS, apphook',
     test_suite='cms_helper.run',
 
     classifiers=[
