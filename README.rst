@@ -92,6 +92,36 @@ with relevant configuration options and triggering setup at the end of ``cms_app
     # trigger djangocms-apphook-setup function
     App4.setup()
 
+
+Customizing ApphookConfig instances creation
+--------------------------------------------
+
+While ``config_fields`` and ``config_translated_fields`` should cover most use cases when it comes
+to ApphookConfig instances creation, you may need more control over the process.
+
+For this, it's possible to override ``AutoCMSAppMixin._create_config`` and
+``AutoCMSAppMixin._create_config_translation``.
+
+Default implementation::
+
+    @classmethod
+    def _create_config(cls):
+        return cls.app_config.objects.create(
+            namespace=cls.auto_setup['namespace'], **cls.auto_setup['config_fields']
+        )
+
+    @classmethod
+    def _create_config_translation(cls, config, lang):
+        config.set_current_language(lang, initialize=True)
+        for field, data in cls.auto_setup['config_translated_fields'].items():
+            setattr(config, field, data)
+        config.save_translations()
+
+
+You can completely redefine the methods, provided you return an ApphookConfig instance
+in ``_create_config``.
+
+
 Configuration options
 ---------------------
 
