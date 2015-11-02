@@ -17,6 +17,18 @@ class AutoCMSAppMixin(object):
 
     @classmethod
     def _create_page(cls, page, lang, auto_title, cms_app=None, parent=None, namespace=None):
+        """
+        Create a single page or titles
+
+        :param page: Page instance
+        :param lang: language code
+        :param auto_title: title text for the newly created title
+        :param cms_app: Apphook Class to be attached to the page
+        :param parent: parent page (None when creating the home page)
+        :param namespace: application instance name (as provided to the ApphookConfig)
+
+        :return: draft copy of the created page
+        """
         from cms.api import create_page, create_title
         from cms.utils.conf import get_templates
 
@@ -38,7 +50,48 @@ class AutoCMSAppMixin(object):
         return page.get_draft_object()
 
     @classmethod
+    def _create_config(cls):
+        """
+        Creates an ApphookConfig instance
+
+        ``AutoCMSAppMixin.auto_setup['config_fields']`` is used to fill in the data
+        of the instance.
+
+        :return: ApphookConfig instance
+        """
+        return cls.app_config.objects.create(
+            namespace=cls.auto_setup['namespace'], **cls.auto_setup['config_fields']
+        )
+
+    @classmethod
+    def _create_config_translation(cls, config, lang):
+        """
+        Creates a translation for the given ApphookConfig
+
+        Only django-parler kind of models are currently supported.
+
+        ``AutoCMSAppMixin.auto_setup['config_translated_fields']`` is used to fill in the data
+        of the instance for all the languages.
+
+        :param config: ApphookConfig instance
+        :param lang: language code for the language to create
+        """
+        config.set_current_language(lang, initialize=True)
+        for field, data in cls.auto_setup['config_translated_fields'].items():
+            setattr(config, field, data)
+        config.save_translations()
+
+    @classmethod
     def _setup_pages(cls, setup_config=False):
+        """
+        Create the page structure.
+
+        It created a home page (if not exists) and a sub-page, and attach the Apphook to the
+        sub-page.
+        Pages titles are provided by ``AutoCMSAppMixin.auto_setup``
+
+        :param setup_config: boolean to control whether creating the ApphookConfig instance
+        """
         from cms.exceptions import NoHomeFound
         from cms.models import Page
         from cms.utils import get_language_list
@@ -46,19 +99,15 @@ class AutoCMSAppMixin(object):
 
         config = None
         if setup_config:
-            config = cls.app_config.objects.create(
-                namespace=cls.auto_setup['namespace'], **cls.auto_setup['config_fields']
-            )
+            config = cls._create_config()
+
         langs = get_language_list()
         app_page = None
         for lang in langs:
             with override(lang):
                 if config:
                     if cls.auto_setup['config_translated_fields']:
-                        config.set_current_language(lang, initialize=True)
-                        for field, data in cls.auto_setup['config_translated_fields'].items():
-                            setattr(config, field, data)
-                        config.save_translations()
+                        cls._create_config_translation(config, lang)
                     namespace = config.namespace
                 elif cls.app_name:
                     namespace = cls.app_name
@@ -75,6 +124,14 @@ class AutoCMSAppMixin(object):
 
     @classmethod
     def setup(cls):
+        """
+        Main method to auto setup Apphook
+
+        It must be called after the Apphook registration::
+
+            apphook_pool.register(MyApp)
+            MyApp.setup()
+        """
         from cms.models import Page
 
         if cls.auto_setup and cls.auto_setup.get('enabled', False):
