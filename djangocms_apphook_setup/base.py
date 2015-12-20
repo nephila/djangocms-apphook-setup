@@ -95,6 +95,7 @@ class AutoCMSAppMixin(object):
         from cms.exceptions import NoHomeFound
         from cms.models import Page
         from cms.utils import get_language_list
+        from django.conf import settings
         from django.utils.translation import override
 
         config = None
@@ -103,6 +104,15 @@ class AutoCMSAppMixin(object):
 
         langs = get_language_list()
         app_page = None
+        get_url = False
+        if getattr(settings, 'ALDRYN_SEARCH_CMS_PAGE', False):
+            from aldryn_search.search_indexes import TitleIndex
+
+            def fake_url(self, obj):
+                return ''
+
+            get_url = TitleIndex.get_url
+            TitleIndex.get_url = fake_url
         for lang in langs:
             with override(lang):
                 if config:
@@ -121,6 +131,8 @@ class AutoCMSAppMixin(object):
                 app_page = cls._create_page(
                     app_page, lang, cls.auto_setup['page title'], cls.__name__, home, namespace
                 )
+        if get_url:
+            TitleIndex.get_url = get_url
 
     @classmethod
     def setup(cls):
@@ -132,22 +144,34 @@ class AutoCMSAppMixin(object):
             apphook_pool.register(MyApp)
             MyApp.setup()
         """
+
         from cms.models import Page
 
-        if cls.auto_setup and cls.auto_setup.get('enabled', False):
-            if not cls.auto_setup.get('home title', False):
-                warnings.warn('"home title" is not set in {0}.auto_setup attribute'.format(cls))
-                return
-            if not cls.auto_setup.get('page title', False):
-                warnings.warn('"page title" is not set in {0}.auto_setup attribute'.format(cls))
-                return
-            if cls.app_name and not cls.auto_setup.get('namespace', False):
-                warnings.warn('"page title" is not set in {0}.auto_setup attribute'.format(cls))
-                return
+        try:
+            if cls.auto_setup and cls.auto_setup.get('enabled', False):
+                if not cls.auto_setup.get('home title', False):
+                    warnings.warn(
+                        '"home title" is not set in {0}.auto_setup attribute'.format(cls)
+                    )
+                    return
+                if not cls.auto_setup.get('page title', False):
+                    warnings.warn(
+                        '"page title" is not set in {0}.auto_setup attribute'.format(cls)
+                    )
+                    return
+                if cls.app_name and not cls.auto_setup.get('namespace', False):
+                    warnings.warn(
+                        '"page title" is not set in {0}.auto_setup attribute'.format(cls)
+                    )
+                    return
 
-            if getattr(cls, 'app_config', False):
-                configs = cls.app_config.objects.all()
-                if not configs.exists():
-                    cls._setup_pages(setup_config=True)
-            elif not Page.objects.filter(application_urls=cls.__name__).exists():
-                cls._setup_pages(setup_config=False)
+                if getattr(cls, 'app_config', False):
+                    configs = cls.app_config.objects.all()
+                    if not configs.exists():
+                        cls._setup_pages(setup_config=True)
+                elif not Page.objects.filter(application_urls=cls.__name__).exists():
+                    cls._setup_pages(setup_config=False)
+        except Exception:
+            # Ignore any error during setup. Worst case: pages are not created, but the instance
+            # won't break
+            pass
