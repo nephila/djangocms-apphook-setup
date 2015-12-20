@@ -66,6 +66,10 @@ The setup function included here does the following:
 In case the application uses ``aldryn-apphooks-config``, a Apphook Config instance is created
 and added to the application page together with the Apphook.
 
+.. note:: To avoid issues with ``AldrynSearch`` during the creation of pages, the url of the
+          pages is faked; this is normally not an issues as the pages will be reindexed
+          whenever the content is updated.
+
 Usage
 -----
 
