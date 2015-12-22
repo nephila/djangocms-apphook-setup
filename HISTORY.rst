@@ -3,7 +3,7 @@
 History
 -------
 
-0.1.2 (2015-12-20)
+0.1.2 (2015-12-22)
 ++++++++++++++++++
 
 * Monekypatch aldryn_search index to avoid errors
