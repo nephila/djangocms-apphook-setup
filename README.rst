@@ -145,6 +145,9 @@ The behavior of the setup function can be customized by setting the following ke
   for non-translated fields.
 * ``config_translated_fields``: Fields used when creating the ApphookConfigModel instance;
   use this attribute for translated fields (currently only ``django-parler`` is supported).
+* ``sites``: List of site ids for which to create the pages; if set to ``True`` (the default value)
+  pages will be created for all sites. A single apphook config is created for all the sites;
+  instance is created only on first page creation.
 
 
 Notes on testing
