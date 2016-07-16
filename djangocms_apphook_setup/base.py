@@ -3,6 +3,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import warnings
 
+from django.contrib.sites.models import Site
+
 
 class AutoCMSAppMixin(object):
 
@@ -13,10 +15,12 @@ class AutoCMSAppMixin(object):
         'namespace': None,
         'config_fields': {},
         'config_translated_fields': {},
+        'sites': True
     }
 
     @classmethod
-    def _create_page(cls, page, lang, auto_title, cms_app=None, parent=None, namespace=None):
+    def _create_page(cls, page, lang, auto_title, cms_app=None, parent=None, namespace=None,
+                     site=None):
         """
         Create a single page or titles
 
@@ -35,7 +39,7 @@ class AutoCMSAppMixin(object):
         default_template = get_templates()[0][0]
         if page is None:
             page = create_page(
-                auto_title, language=lang, parent=parent,
+                auto_title, language=lang, parent=parent, site=site,
                 template=default_template, in_navigation=True, published=True
             )
             page.application_urls = cms_app
@@ -82,7 +86,7 @@ class AutoCMSAppMixin(object):
         config.save_translations()
 
     @classmethod
-    def _setup_pages(cls, setup_config=False):
+    def _setup_pages(cls, config):
         """
         Create the page structure.
 
@@ -98,11 +102,6 @@ class AutoCMSAppMixin(object):
         from django.conf import settings
         from django.utils.translation import override
 
-        config = None
-        if setup_config:
-            config = cls._create_config()
-
-        langs = get_language_list()
         app_page = None
         get_url = False
         if getattr(settings, 'ALDRYN_SEARCH_CMS_PAGE', False):
@@ -113,26 +112,34 @@ class AutoCMSAppMixin(object):
 
             get_url = TitleIndex.get_url
             TitleIndex.get_url = fake_url
-        for lang in langs:
-            with override(lang):
-                if config:
-                    if cls.auto_setup['config_translated_fields']:
-                        cls._create_config_translation(config, lang)
-                    namespace = config.namespace
-                elif cls.app_name:
-                    namespace = cls.app_name
-                else:
-                    namespace = None
-                try:
-                    home = Page.objects.get_home().get_draft_object()
-                except NoHomeFound:
-                    home = None
-                home = cls._create_page(home, lang, cls.auto_setup['home title'])
-                app_page = cls._create_page(
-                    app_page, lang, cls.auto_setup['page title'], cls.__name__, home, namespace
-                )
-        if get_url:
-            TitleIndex.get_url = get_url
+        site = Site.objects.get_current()
+        auto_sites = cls.auto_setup.get('sites', True)
+        if auto_sites is True or site.pk in auto_sites:
+            langs = get_language_list(site.pk)
+            if not Page.objects.on_site(site.pk).filter(application_urls=cls.__name__).exists():
+                for lang in langs:
+                    with override(lang):
+                        if config:
+                            if cls.auto_setup['config_translated_fields']:
+                                cls._create_config_translation(config, lang)
+                            namespace = config.namespace
+                        elif cls.app_name:
+                            namespace = cls.app_name
+                        else:
+                            namespace = None
+                        try:
+                            home = Page.objects.get_home(site.pk).get_draft_object()
+                        except NoHomeFound:
+                            home = None
+                        home = cls._create_page(
+                            home, lang, cls.auto_setup['home title'], site=site
+                        )
+                        app_page = cls._create_page(
+                            app_page, lang, cls.auto_setup['page title'], cls.__name__, home,
+                            namespace, site=site
+                        )
+                if get_url:
+                    TitleIndex.get_url = get_url
 
     @classmethod
     def setup(cls):
@@ -144,9 +151,6 @@ class AutoCMSAppMixin(object):
             apphook_pool.register(MyApp)
             MyApp.setup()
         """
-
-        from cms.models import Page
-
         try:
             if cls.auto_setup and cls.auto_setup.get('enabled', False):
                 if not cls.auto_setup.get('home title', False):
@@ -164,13 +168,14 @@ class AutoCMSAppMixin(object):
                         '"page title" is not set in {0}.auto_setup attribute'.format(cls)
                     )
                     return
-
+                config = None
                 if getattr(cls, 'app_config', False):
                     configs = cls.app_config.objects.all()
                     if not configs.exists():
-                        cls._setup_pages(setup_config=True)
-                elif not Page.objects.filter(application_urls=cls.__name__).exists():
-                    cls._setup_pages(setup_config=False)
+                        config = cls._create_config()
+                    else:
+                        config = configs.first()
+                cls._setup_pages(config)
         except Exception:
             # Ignore any error during setup. Worst case: pages are not created, but the instance
             # won't break
