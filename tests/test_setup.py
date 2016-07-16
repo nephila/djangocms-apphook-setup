@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 
 from cms.api import create_page, create_title
-from cms.models import Page
+from cms.models import Page, Site
 from cms.utils import get_language_list
 from django.utils.translation import override
 
@@ -20,8 +20,10 @@ class SetupAppBaseTest(BaseTest):
 
     def setUp(self):
         super(SetupAppBaseTest, self).setUp()
-        from cms.apphook_pool import apphook_pool
+        self._delete_modules()
 
+    def _delete_modules(self):
+        from cms.apphook_pool import apphook_pool
         delete = [
             'tests.sample_app_1',
             'tests.sample_app_1.cms_app',
@@ -41,30 +43,33 @@ class SetupAppBaseTest(BaseTest):
             self.config.cmsapp = None
         apphook_pool.clear()
 
-    def _setup_from_cmsapp(self):
+    def _setup_from_cmsapp(self, site_id=1):
 
         # Tests starts with no page and no config
-        self.assertFalse(Page.objects.exists())
-        if self.config:
-            self.assertFalse(self.config.objects.exists())
-        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 0)
+        if site_id == 1:
+            self.assertFalse(Page.objects.exists())
+            if self.config:
+                self.assertFalse(self.config.objects.exists())
+            self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 0)
 
         # importing cms_app triggers the auto setup
         __import__(self.module, fromlist=(str('cms_app'),))
 
         # Home and blog, published and draft
-        self.assertEqual(Page.objects.count(), 4)
+        self.assertEqual(Page.objects.count(), 4 * site_id)
         if self.config:
             self.assertEqual(self.config.objects.count(), 1)
-        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 2)
+        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 2 * site_id)
 
-    def _setup_filled(self):
+    def _setup_filled(self, site_id=1):
+        site = Site.objects.get(pk=site_id)
 
         # Tests starts with no page and no config
-        self.assertFalse(Page.objects.exists())
-        if self.config:
-            self.assertFalse(self.config.objects.exists())
-        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 0)
+        if site_id == 1:
+            self.assertFalse(Page.objects.exists())
+            if self.config:
+                self.assertFalse(self.config.objects.exists())
+            self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 0)
 
         langs = get_language_list()
         home = None
@@ -72,7 +77,7 @@ class SetupAppBaseTest(BaseTest):
             with override(lang):
                 if not home:
                     home = create_page(
-                        'a new home', language=lang,
+                        'a new home', language=lang, site=site,
                         template='page.html', in_navigation=True, published=True
                     )
                 else:
@@ -85,14 +90,14 @@ class SetupAppBaseTest(BaseTest):
         __import__(self.module, fromlist=(str('cms_app'),))
 
         # Home and blog, published and draft
-        self.assertEqual(Page.objects.count(), 4)
+        self.assertEqual(Page.objects.count(), 4 * site_id)
         if self.config:
             self.assertEqual(self.config.objects.count(), 1)
-        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 2)
+        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 2 * site_id)
 
-        home = Page.objects.get_home()
+        home = Page.objects.get_home(site)
         for lang in langs:
-            self.assertEqual(home.get_title(lang), 'a new home')
+            self.assertEqual(home.get_title(), 'a new home')
 
 
 class SetupApp1Test(SetupAppBaseTest):
@@ -154,6 +159,64 @@ class SetupApp4Test(SetupAppBaseTest):
         self.assertTrue(config.random_option)
         config.set_current_language('en')
         self.assertEqual(config.object_name, 'name')
+
+
+class SetupApp4Site2Test(SetupAppBaseTest):
+    config = App4Config
+    module = 'tests.sample_app_4'
+    app_name = 'App4'
+
+    def setUp(self):
+        super(SetupApp4Site2Test, self).setUp()
+        Site.objects.create(name='domain2', domain='www.example2.com', id=2)
+
+    def test_setup_from_cmsapp(self):
+        with self.settings(SITE_ID=1):
+            self._setup_from_cmsapp()
+        self._delete_modules()
+        with self.settings(SITE_ID=2):
+            self._setup_from_cmsapp(site_id=2)
+        self.assertEqual(Page.objects.count(), 8)
+        self.assertEqual(Page.objects.on_site(1).count(), 4)
+        self.assertEqual(Page.objects.on_site(2).count(), 4)
+        self.assertEqual(self.config.objects.count(), 1)
+        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 4)
+        self.assertEqual(Page.objects.on_site(1).filter(application_urls=self.app_name).count(), 2)
+        self.assertEqual(Page.objects.on_site(2).filter(application_urls=self.app_name).count(), 2)
+
+    def test_setup_filled(self):
+        with self.settings(SITE_ID=1):
+            self._setup_filled()
+        self._delete_modules()
+        with self.settings(SITE_ID=2):
+            self._setup_filled(site_id=2)
+        self.assertEqual(Page.objects.count(), 8)
+        self.assertEqual(Page.objects.on_site(1).count(), 4)
+        self.assertEqual(Page.objects.on_site(2).count(), 4)
+        self.assertEqual(self.config.objects.count(), 1)
+        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 4)
+        self.assertEqual(Page.objects.on_site(1).filter(application_urls=self.app_name).count(), 2)
+        self.assertEqual(Page.objects.on_site(2).filter(application_urls=self.app_name).count(), 2)
+
+    def test_config_values(self):
+        # importing cms_app triggers the auto setup
+        with self.settings(SITE_ID=1):
+            __import__(self.module, fromlist=(str('cms_app'),))
+            config = self.config.objects.first()
+            self.assertEqual(set(config.get_available_languages()), set(('en', 'it', 'fr')))
+            self.assertTrue(config.random_option)
+            config.set_current_language('en')
+            self.assertEqual(config.object_name, 'name')
+        self._delete_modules()
+        with self.settings(SITE_ID=2):
+            __import__(self.module, fromlist=(str('cms_app'),))
+            self.assertEqual(self.config.objects.count(), 1)
+            config = self.config.objects.first()
+            self.assertEqual(set(config.get_available_languages()), set(('en', 'it', 'fr')))
+            self.assertTrue(config.random_option)
+            config.set_current_language('en')
+            self.assertEqual(config.object_name, 'name')
+
 
 
 class SetupApp5Test(SetupAppBaseTest):

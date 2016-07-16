@@ -68,6 +68,7 @@ HELPER_SETTINGS = dict(
             'hide_untranslated': False,
         }
     },
+    PARLER_ENABLE_CACHING=False,
     FILE_UPLOAD_TEMP_DIR=mkdtemp(),
     SITE_ID=1,
 )
