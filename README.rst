@@ -37,10 +37,11 @@ Supported Django versions:
 * Django 1.6
 * Django 1.7
 * Django 1.8
+* Django 1.9
 
 Supported django CMS versions:
 
-* django CMS 3.x
+* django CMS 3.1+
 
 Features
 --------
@@ -90,6 +91,7 @@ with relevant configuration options and triggering setup at the end of ``cms_app
             'namespace': 'namespace',
             'config_fields': {'random_option': True},
             'config_translated_fields': {'app_title': 'app title', 'object_name': 'name'},
+            'sites': True,
         }
 
     apphook_pool.register(App4)
