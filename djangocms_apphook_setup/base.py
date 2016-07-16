@@ -115,6 +115,13 @@ class AutoCMSAppMixin(object):
         site = Site.objects.get_current()
         auto_sites = cls.auto_setup.get('sites', True)
         if auto_sites is True or site.pk in auto_sites:
+            if getattr(cls, 'app_config', False):
+                configs = cls.app_config.objects.all()
+                if not configs.exists():
+                    config = cls._create_config()
+                else:
+                    config = configs.first()
+
             langs = get_language_list(site.pk)
             if not Page.objects.on_site(site.pk).filter(application_urls=cls.__name__).exists():
                 for lang in langs:
@@ -169,12 +176,6 @@ class AutoCMSAppMixin(object):
                     )
                     return
                 config = None
-                if getattr(cls, 'app_config', False):
-                    configs = cls.app_config.objects.all()
-                    if not configs.exists():
-                        config = cls._create_config()
-                    else:
-                        config = configs.first()
                 cls._setup_pages(config)
         except Exception:
             # Ignore any error during setup. Worst case: pages are not created, but the instance

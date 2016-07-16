@@ -18,6 +18,7 @@ HELPER_SETTINGS = dict(
         'tests.sample_app_3',
         'tests.sample_app_4',
         'tests.sample_app_5',
+        'tests.sample_app_6',
     ],
     LANGUAGE_CODE='en',
     LANGUAGES=(
