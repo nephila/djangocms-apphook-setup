@@ -3,4 +3,4 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 __author__ = 'Iacopo Spalletti'
 __email__ = 'i.spalletti@nephila.it'
-__version__ = '0.1.2'
+__version__ = '0.2.0'

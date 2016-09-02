@@ -34,10 +34,7 @@ Utility function to auto setup apphooks on project startup.
 
 Supported Django versions:
 
-* Django 1.6
-* Django 1.7
-* Django 1.8
-* Django 1.9
+* Django 1.6 to 1.9
 
 Supported django CMS versions:
 
