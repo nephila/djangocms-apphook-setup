@@ -28,16 +28,22 @@ class SetupAppBaseTest(BaseTest):
         delete = [
             'tests.sample_app_1',
             'tests.sample_app_1.cms_app',
+            'tests.sample_app_1.cms_apps',
             'tests.sample_app_2',
             'tests.sample_app_2.cms_app',
+            'tests.sample_app_2.cms_apps',
             'tests.sample_app_3',
             'tests.sample_app_3.cms_app',
+            'tests.sample_app_3.cms_apps',
             'tests.sample_app_4',
             'tests.sample_app_4.cms_app',
+            'tests.sample_app_4.cms_apps',
             'tests.sample_app_5',
             'tests.sample_app_5.cms_app',
+            'tests.sample_app_5.cms_apps',
             'tests.sample_app_6',
             'tests.sample_app_6.cms_app',
+            'tests.sample_app_6.cms_apps',
         ]
         for module in delete:
             if module in sys.modules:
