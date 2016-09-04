@@ -7,6 +7,7 @@ from cms.api import create_page, create_title
 from cms.models import Page, Site
 from cms.utils import get_language_list
 from django.utils.translation import override
+from djangocms_helper.utils import CMS_30
 
 from .base import BaseTest
 from .sample_app_1.cms_appconfig import AppConfig
@@ -181,33 +182,39 @@ class SetupApp4Site2Test(SetupAppBaseTest):
         with self.settings(SITE_ID=1):
             self._setup_from_cmsapp(site_id=1, home_final=4, blog_final=2)
         self._delete_modules()
-        with self.settings(SITE_ID=2):
-            self._setup_from_cmsapp(
-                site_id=2, home_final=8, blog_final=4, configs_final=1, configs_init=1, pages_init=4
-            )
-        self.assertEqual(Page.objects.count(), 8)
-        self.assertEqual(Page.objects.on_site(1).count(), 4)
-        self.assertEqual(Page.objects.on_site(2).count(), 4)
-        self.assertEqual(self.config.objects.count(), 1)
-        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 4)
-        self.assertEqual(Page.objects.on_site(1).filter(application_urls=self.app_name).count(), 2)
-        self.assertEqual(Page.objects.on_site(2).filter(application_urls=self.app_name).count(), 2)
+        if CMS_30:
+            self.skipTest('Multisite not supported on djago CMS 3.0')
+        else:
+            with self.settings(SITE_ID=2):
+                self._setup_from_cmsapp(
+                    site_id=2, home_final=8, blog_final=4, configs_final=1, configs_init=1, pages_init=4
+                )
+            self.assertEqual(Page.objects.count(), 8)
+            self.assertEqual(Page.objects.on_site(1).count(), 4)
+            self.assertEqual(Page.objects.on_site(2).count(), 4)
+            self.assertEqual(self.config.objects.count(), 1)
+            self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 4)
+            self.assertEqual(Page.objects.on_site(1).filter(application_urls=self.app_name).count(), 2)
+            self.assertEqual(Page.objects.on_site(2).filter(application_urls=self.app_name).count(), 2)
 
     def test_setup_filled(self):
         with self.settings(SITE_ID=1):
             self._setup_filled(site_id=1, home_final=4, blog_final=2)
         self._delete_modules()
-        with self.settings(SITE_ID=2):
-            self._setup_filled(
-                site_id=2, home_final=8, blog_final=4, configs_final=1, configs_init=1, pages_init=4
-            )
-        self.assertEqual(Page.objects.count(), 8)
-        self.assertEqual(Page.objects.on_site(1).count(), 4)
-        self.assertEqual(Page.objects.on_site(2).count(), 4)
-        self.assertEqual(self.config.objects.count(), 1)
-        self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 4)
-        self.assertEqual(Page.objects.on_site(1).filter(application_urls=self.app_name).count(), 2)
-        self.assertEqual(Page.objects.on_site(2).filter(application_urls=self.app_name).count(), 2)
+        if CMS_30:
+            self.skipTest('Multisite not supported on djago CMS 3.0')
+        else:
+            with self.settings(SITE_ID=2):
+                self._setup_filled(
+                    site_id=2, home_final=8, blog_final=4, configs_final=1, configs_init=1, pages_init=4
+                )
+            self.assertEqual(Page.objects.count(), 8)
+            self.assertEqual(Page.objects.on_site(1).count(), 4)
+            self.assertEqual(Page.objects.on_site(2).count(), 4)
+            self.assertEqual(self.config.objects.count(), 1)
+            self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 4)
+            self.assertEqual(Page.objects.on_site(1).filter(application_urls=self.app_name).count(), 2)
+            self.assertEqual(Page.objects.on_site(2).filter(application_urls=self.app_name).count(), 2)
 
     def test_config_values(self):
         # importing cms_app triggers the auto setup
@@ -219,14 +226,17 @@ class SetupApp4Site2Test(SetupAppBaseTest):
             config.set_current_language('en')
             self.assertEqual(config.object_name, 'name')
         self._delete_modules()
-        with self.settings(SITE_ID=2):
-            __import__(self.module, fromlist=(str('cms_app'),))
-            self.assertEqual(self.config.objects.count(), 1)
-            config = self.config.objects.first()
-            self.assertEqual(set(config.get_available_languages()), set(('en', 'it', 'fr')))
-            self.assertTrue(config.random_option)
-            config.set_current_language('en')
-            self.assertEqual(config.object_name, 'name')
+        if CMS_30:
+            self.skipTest('Multisite not supported on djago CMS 3.0')
+        else:
+            with self.settings(SITE_ID=2):
+                __import__(self.module, fromlist=(str('cms_app'),))
+                self.assertEqual(self.config.objects.count(), 1)
+                config = self.config.objects.first()
+                self.assertEqual(set(config.get_available_languages()), set(('en', 'it', 'fr')))
+                self.assertTrue(config.random_option)
+                config.set_current_language('en')
+                self.assertEqual(config.object_name, 'name')
 
 
 class SetupApp6Site2Test(SetupAppBaseTest):
