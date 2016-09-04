@@ -38,7 +38,7 @@ Supported Django versions:
 
 Supported django CMS versions:
 
-* django CMS 3.1+
+* django CMS 3.0+
 
 Features
 --------

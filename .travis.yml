@@ -25,8 +25,10 @@ env:
   - DJANGO='django18' CMS='cms31'
   - DJANGO='django17' CMS='cms32'
   - DJANGO='django17' CMS='cms31'
+  - DJANGO='django17' CMS='cms30'
   - DJANGO='django16' CMS='cms32'
   - DJANGO='django16' CMS='cms31'
+  - DJANGO='django16' CMS='cms30'
 
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors

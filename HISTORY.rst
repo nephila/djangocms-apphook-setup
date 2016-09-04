@@ -7,7 +7,6 @@ History
 ++++++++++++++++++
 
 * Add support for multisite setups
-* Drop django CMS 3.0 compatibility
 * Add Django 1.9, 1.10 support
 * Add django CMS 3.4 support
 
