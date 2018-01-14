@@ -3,7 +3,7 @@
 History
 -------
 
-0.3.0 (unreleased)
+0.3.0 (2018-01-15)
 ++++++++++++++++++
 
 * Add support for multisite setups
