@@ -10,9 +10,10 @@ from djangocms_apphook_setup.base import AutoCMSAppMixin
 from .cms_appconfig import App6Config
 
 
+@apphook_pool.register
 class App6(AutoCMSAppMixin, CMSConfigApp):
     name = _('App6')
-    urls = ['sample_app_6.urls']
+    _urls = ['sample_app_6.urls']
     app_name = 'app6'
     app_config = App6Config
     auto_setup = {
@@ -25,5 +26,5 @@ class App6(AutoCMSAppMixin, CMSConfigApp):
         'sites': [2]
     }
 
-apphook_pool.register(App6)
+
 App6.setup()

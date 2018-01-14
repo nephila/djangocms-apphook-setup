@@ -10,9 +10,10 @@ from djangocms_apphook_setup.base import AutoCMSAppMixin
 from .cms_appconfig import App4Config
 
 
+@apphook_pool.register
 class App4(AutoCMSAppMixin, CMSConfigApp):
     name = _('App4')
-    urls = ['sample_app_4.urls']
+    _urls = ['sample_app_4.urls']
     app_name = 'app4'
     app_config = App4Config
     auto_setup = {
@@ -24,5 +25,5 @@ class App4(AutoCMSAppMixin, CMSConfigApp):
         'config_translated_fields': {'app_title': 'app title', 'object_name': 'name'},
     }
 
-apphook_pool.register(App4)
+
 App4.setup()

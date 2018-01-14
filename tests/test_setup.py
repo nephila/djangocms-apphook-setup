@@ -62,7 +62,7 @@ class SetupAppBaseTest(BaseTest):
         self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), configs_init * 2)
 
         # importing cms_app triggers the auto setup
-        __import__(self.module, fromlist=(str('cms_app'),))
+        __import__(self.module, fromlist=(str('cms_apps'),))
 
         # Final set of pages / configs
         self.assertEqual(Page.objects.count(), home_final)
@@ -72,7 +72,7 @@ class SetupAppBaseTest(BaseTest):
 
     def _setup_filled(self, site_id=1, home_final=4, blog_final=2, configs_final=1, configs_init=0, pages_init=0):
         site = Site.objects.get(pk=site_id)
-
+        set_home = hasattr(Page, 'set_as_homepage')
         # Tests starts with a set of pages / configs
         self.assertEqual(Page.objects.count(), pages_init)
         if self.config:
@@ -88,6 +88,8 @@ class SetupAppBaseTest(BaseTest):
                         'a new home', language=lang, site=site,
                         template='page.html', in_navigation=True, published=True
                     )
+                    if set_home:
+                        home.set_as_homepage()
                 else:
                     create_title(
                         language=lang, title='a new home', page=home
@@ -95,7 +97,7 @@ class SetupAppBaseTest(BaseTest):
                     home.publish(lang)
 
         # importing cms_app triggers the auto setup
-        __import__(self.module, fromlist=(str('cms_app'),))
+        __import__(self.module, fromlist=(str('cms_apps'),))
 
         # Final set of pages / configs
         self.assertEqual(Page.objects.count(), home_final)
@@ -121,7 +123,7 @@ class SetupApp1Test(SetupAppBaseTest):
 
     def test_config_values(self):
         # importing cms_app triggers the auto setup
-        __import__(self.module, fromlist=(str('cms_app'),))
+        __import__(self.module, fromlist=(str('cms_apps'),))
         config = self.config.objects.first()
         self.assertEqual(config.app_title, 'app title')
 
@@ -161,7 +163,7 @@ class SetupApp4Test(SetupAppBaseTest):
 
     def test_config_values(self):
         # importing cms_app triggers the auto setup
-        __import__(self.module, fromlist=(str('cms_app'),))
+        __import__(self.module, fromlist=(str('cms_apps'),))
         config = self.config.objects.first()
         self.assertEqual(set(config.get_available_languages()), set(('en', 'it', 'fr')))
         self.assertTrue(config.random_option)
@@ -219,7 +221,7 @@ class SetupApp4Site2Test(SetupAppBaseTest):
     def test_config_values(self):
         # importing cms_app triggers the auto setup
         with self.settings(SITE_ID=1):
-            __import__(self.module, fromlist=(str('cms_app'),))
+            __import__(self.module, fromlist=(str('cms_apps'),))
             config = self.config.objects.first()
             self.assertEqual(set(config.get_available_languages()), set(('en', 'it', 'fr')))
             self.assertTrue(config.random_option)
@@ -230,7 +232,7 @@ class SetupApp4Site2Test(SetupAppBaseTest):
             self.skipTest('Multisite not supported on djago CMS 3.0')
         else:
             with self.settings(SITE_ID=2):
-                __import__(self.module, fromlist=(str('cms_app'),))
+                __import__(self.module, fromlist=(str('cms_apps'),))
                 self.assertEqual(self.config.objects.count(), 1)
                 config = self.config.objects.first()
                 self.assertEqual(set(config.get_available_languages()), set(('en', 'it', 'fr')))
@@ -279,11 +281,11 @@ class SetupApp6Site2Test(SetupAppBaseTest):
     def test_config_values(self):
         # importing cms_app triggers the auto setup
         with self.settings(SITE_ID=1):
-            __import__(self.module, fromlist=(str('cms_app'),))
+            __import__(self.module, fromlist=(str('cms_apps'),))
             self.assertEqual(self.config.objects.count(), 0)
         self._delete_modules()
         with self.settings(SITE_ID=2):
-            __import__(self.module, fromlist=(str('cms_app'),))
+            __import__(self.module, fromlist=(str('cms_apps'),))
             self.assertEqual(self.config.objects.count(), 1)
             config = self.config.objects.first()
             self.assertEqual(set(config.get_available_languages()), set(('en',)))
@@ -302,7 +304,7 @@ class SetupApp5Test(SetupAppBaseTest):
         self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), 0)
 
         # importing cms_app triggers the auto setup
-        __import__(self.module, fromlist=(str('cms_app'),))
+        __import__(self.module, fromlist=(str('cms_apps'),))
 
         # No setup is performed
         self.assertEqual(Page.objects.count(), 0)

@@ -20,7 +20,7 @@ class AutoCMSAppMixin(object):
 
     @classmethod
     def _create_page(cls, page, lang, auto_title, cms_app=None, parent=None, namespace=None,
-                     site=None):
+                     site=None, set_home=False):
         """
         Create a single page or titles
 
@@ -30,6 +30,7 @@ class AutoCMSAppMixin(object):
         :param cms_app: Apphook Class to be attached to the page
         :param parent: parent page (None when creating the home page)
         :param namespace: application instance name (as provided to the ApphookConfig)
+        :param set_home: mark as home page (on django CMS 3.5 only)
 
         :return: draft copy of the created page
         """
@@ -51,6 +52,8 @@ class AutoCMSAppMixin(object):
                 language=lang, title=auto_title, page=page
             )
             page.publish(lang)
+        if set_home:
+            page.set_as_homepage()
         return page.get_draft_object()
 
     @classmethod
@@ -138,8 +141,9 @@ class AutoCMSAppMixin(object):
                             home = Page.objects.get_home(site.pk).get_draft_object()
                         except NoHomeFound:
                             home = None
+                        set_home = hasattr(Page, 'set_as_homepage')
                         home = cls._create_page(
-                            home, lang, cls.auto_setup['home title'], site=site
+                            home, lang, cls.auto_setup['home title'], site=site, set_home=set_home
                         )
                         app_page = cls._create_page(
                             app_page, lang, cls.auto_setup['page title'], cls.__name__, home,
