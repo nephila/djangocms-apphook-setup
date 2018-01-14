@@ -13,7 +13,7 @@ from .cms_appconfig import AppConfig
 @apphook_pool.register
 class App1(AutoCMSAppMixin, CMSConfigApp):
     name = _('App1')
-    _urls = ['sample_app_1.urls']
+    _urls = ['tests.sample_app_1.urls']
     app_name = 'app1'
     app_config = AppConfig
     auto_setup = {
