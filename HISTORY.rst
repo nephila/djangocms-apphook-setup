@@ -10,7 +10,7 @@ History
 * Add Django 1.11 support
 * Add django CMS 3.5 support
 
-0.2.0 (unreleased)
+0.2.0 (2016-12-04)
 ++++++++++++++++++
 
 * Add support for multisite setups
