@@ -2,33 +2,7 @@
 djangocms-apphook-setup
 =======================
 
-.. image:: https://img.shields.io/pypi/v/djangocms-apphook-setup.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/djangocms-apphook-setup
-    :alt: Latest PyPI version
-
-.. image:: https://img.shields.io/pypi/dm/djangocms-apphook-setup.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/djangocms-apphook-setup
-    :alt: Monthly downloads
-
-.. image:: https://img.shields.io/pypi/pyversions/djangocms-apphook-setup.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/djangocms-apphook-setup
-    :alt: Python versions
-
-.. image:: https://img.shields.io/travis/nephila/djangocms-apphook-setup.svg?style=flat-square
-    :target: https://travis-ci.org/nephila/djangocms-apphook-setup
-    :alt: Latest Travis CI build status
-
-.. image:: https://img.shields.io/coveralls/nephila/djangocms-apphook-setup/master.svg?style=flat-square
-    :target: https://coveralls.io/r/nephila/djangocms-apphook-setup?branch=master
-    :alt: Test coverage
-
-.. image:: https://img.shields.io/codecov/c/github/nephila/djangocms-apphook-setup/develop.svg?style=flat-square
-    :target: https://codecov.io/github/nephila/djangocms-apphook-setup
-    :alt: Test coverage
-
-.. image:: https://codeclimate.com/github/nephila/djangocms-apphook-setup/badges/gpa.svg?style=flat-square
-   :target: https://codeclimate.com/github/nephila/djangocms-apphook-setup
-   :alt: Code Climate
+|Gitter| |PyPiVersion| |PyVersion| |Status| |TestCoverage| |CodeClimate| |License|
 
 Utility function to auto setup apphooks on project startup.
 
@@ -75,6 +49,7 @@ This utility can be used by extending the ``CMSApp`` class, adding the ``auto_se
 with relevant configuration options and triggering setup at the end of ``cms_app.py``::
 
 
+    @apphook_pool.register
     class App4(AutoCMSAppMixin, CMSConfigApp):
         name = _('App4')
         urls = ['sample_app_4.urls']
@@ -91,7 +66,7 @@ with relevant configuration options and triggering setup at the end of ``cms_app
             'sites': True,
         }
 
-    apphook_pool.register(App4)
+
     # trigger djangocms-apphook-setup function
     App4.setup()
 
@@ -171,3 +146,33 @@ Example cleanup to be included in ``setUp`` method::
         MyApphoolConfigModel.cmsapp = None
         apphook_pool.clear()
 
+
+
+
+.. |Gitter| image:: https://img.shields.io/badge/GITTER-join%20chat-brightgreen.svg?style=flat-square
+    :target: https://gitter.im/nephila/applications
+    :alt: Join the Gitter chat
+
+.. |PyPiVersion| image:: https://img.shields.io/pypi/v/djangocms-apphook-setup.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/djangocms-apphook-setup
+    :alt: Latest PyPI version
+
+.. |PyVersion| image:: https://img.shields.io/pypi/pyversions/djangocms-apphook-setup.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/djangocms-apphook-setup
+    :alt: Python versions
+
+.. |Status| image:: https://img.shields.io/travis/nephila/djangocms-apphook-setup.svg?style=flat-square
+    :target: https://travis-ci.org/nephila/djangocms-apphook-setup
+    :alt: Latest Travis CI build status
+
+.. |TestCoverage| image:: https://img.shields.io/coveralls/nephila/djangocms-apphook-setup/master.svg?style=flat-square
+    :target: https://coveralls.io/r/nephila/djangocms-apphook-setup?branch=master
+    :alt: Test coverage
+
+.. |License| image:: https://img.shields.io/github/license/nephila/djangocms-apphook-setup.svg?style=flat-square
+   :target: https://pypi.python.org/pypi/djangocms-apphook-setup/
+    :alt: License
+
+.. |CodeClimate| image:: https://codeclimate.com/github/nephila/djangocms-apphook-setup/badges/gpa.svg?style=flat-square
+   :target: https://codeclimate.com/github/nephila/djangocms-apphook-setup
+   :alt: Code Climate
