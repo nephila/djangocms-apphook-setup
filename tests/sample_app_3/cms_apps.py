@@ -11,7 +11,7 @@ from djangocms_apphook_setup.base import AutoCMSAppMixin
 @apphook_pool.register
 class App3(AutoCMSAppMixin, CMSApp):
     name = _('App3')
-    _urls = ['sample_app_3.urls']
+    _urls = ['tests.sample_app_3.urls']
     auto_setup = {
         'enabled': True,
         'home title': 'home title',

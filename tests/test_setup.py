@@ -28,22 +28,16 @@ class SetupAppBaseTest(BaseTest):
         from cms.apphook_pool import apphook_pool
         delete = [
             'tests.sample_app_1',
-            'tests.sample_app_1.cms_app',
             'tests.sample_app_1.cms_apps',
             'tests.sample_app_2',
-            'tests.sample_app_2.cms_app',
             'tests.sample_app_2.cms_apps',
             'tests.sample_app_3',
-            'tests.sample_app_3.cms_app',
             'tests.sample_app_3.cms_apps',
             'tests.sample_app_4',
-            'tests.sample_app_4.cms_app',
             'tests.sample_app_4.cms_apps',
             'tests.sample_app_5',
-            'tests.sample_app_5.cms_app',
             'tests.sample_app_5.cms_apps',
             'tests.sample_app_6',
-            'tests.sample_app_6.cms_app',
             'tests.sample_app_6.cms_apps',
         ]
         for module in delete:
@@ -106,8 +100,7 @@ class SetupAppBaseTest(BaseTest):
         self.assertEqual(Page.objects.filter(application_urls=self.app_name).count(), blog_final)
 
         home = Page.objects.get_home(site)
-        for lang in langs:
-            self.assertEqual(home.get_title(), 'a new home')
+        self.assertEqual(home.get_title(), 'a new home')
 
 
 class SetupApp1Test(SetupAppBaseTest):
