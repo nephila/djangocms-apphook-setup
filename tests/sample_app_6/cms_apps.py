@@ -7,23 +7,24 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangocms_apphook_setup.base import AutoCMSAppMixin
 
-from .cms_appconfig import App4Config
+from .cms_appconfig import App6Config
 
 
 @apphook_pool.register
-class App4(AutoCMSAppMixin, CMSConfigApp):
-    name = _('App4')
-    _urls = ['sample_app_4.urls']
-    app_name = 'app4'
-    app_config = App4Config
+class App6(AutoCMSAppMixin, CMSConfigApp):
+    name = _('App6')
+    _urls = ['sample_app_6.urls']
+    app_name = 'app6'
+    app_config = App6Config
     auto_setup = {
         'enabled': True,
         'home title': 'home title',
-        'page title': 'page 4 title',
+        'page title': 'page 6 title',
         'namespace': 'namespace',
         'config_fields': {'random_option': True},
         'config_translated_fields': {'app_title': 'app title', 'object_name': 'name'},
+        'sites': [2]
     }
 
 
-App4.setup()
+App6.setup()

@@ -5,7 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from tempfile import mkdtemp
 
 
-def gettext(s): return s
+def gettext(s):
+    return s
 
 HELPER_SETTINGS = dict(
     ROOT_URLCONF='tests.test_utils.urls',
@@ -18,6 +19,7 @@ HELPER_SETTINGS = dict(
         'tests.sample_app_3',
         'tests.sample_app_4',
         'tests.sample_app_5',
+        'tests.sample_app_6',
     ],
     LANGUAGE_CODE='en',
     LANGUAGES=(
@@ -68,6 +70,7 @@ HELPER_SETTINGS = dict(
             'hide_untranslated': False,
         }
     },
+    PARLER_ENABLE_CACHING=False,
     FILE_UPLOAD_TEMP_DIR=mkdtemp(),
     SITE_ID=1,
 )

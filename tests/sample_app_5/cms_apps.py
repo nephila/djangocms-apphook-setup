@@ -8,34 +8,37 @@ from django.utils.translation import ugettext_lazy as _
 from djangocms_apphook_setup.base import AutoCMSAppMixin
 
 
+@apphook_pool.register
 class App5a(AutoCMSAppMixin, CMSApp):
     name = _('App5a')
-    urls = ['sample_app_2.urls']
+    _urls = ['sample_app_2.urls']
     app_name = 'app5a'
     auto_setup = {
         'enabled': True,
     }
 
-apphook_pool.register(App5a)
+
 App5a.setup()
 
 
+@apphook_pool.register
 class App5b(AutoCMSAppMixin, CMSApp):
     name = _('App5b')
-    urls = ['sample_app_2.urls']
+    _urls = ['sample_app_2.urls']
     app_name = 'app5b'
     auto_setup = {
         'enabled': True,
         'home title': 'home title',
     }
 
-apphook_pool.register(App5b)
+
 App5b.setup()
 
 
+@apphook_pool.register
 class App5c(AutoCMSAppMixin, CMSApp):
     name = _('App5c')
-    urls = ['sample_app_2.urls']
+    _urls = ['sample_app_2.urls']
     app_name = 'app5c'
     auto_setup = {
         'enabled': True,
@@ -43,5 +46,5 @@ class App5c(AutoCMSAppMixin, CMSApp):
         'page title': 'page 1 title',
     }
 
-apphook_pool.register(App5c)
+
 App5c.setup()

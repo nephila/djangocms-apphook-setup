@@ -8,9 +8,10 @@ from django.utils.translation import ugettext_lazy as _
 from djangocms_apphook_setup.base import AutoCMSAppMixin
 
 
+@apphook_pool.register
 class App2(AutoCMSAppMixin, CMSApp):
     name = _('App2')
-    urls = ['sample_app_2.urls']
+    _urls = ['sample_app_2.urls']
     app_name = 'app2'
     auto_setup = {
         'enabled': True,
@@ -19,5 +20,5 @@ class App2(AutoCMSAppMixin, CMSApp):
         'namespace': 'namespace',
     }
 
-apphook_pool.register(App2)
+
 App2.setup()

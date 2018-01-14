@@ -34,11 +34,11 @@ Utility function to auto setup apphooks on project startup.
 
 Supported Django versions:
 
-* Django 1.8 to 1.10
+* Django 1.8 to 1.11
 
 Supported django CMS versions:
 
-* django CMS 3.2 to 3.4
+* django CMS 3.4 to 3.5
 
 Features
 --------
@@ -88,6 +88,7 @@ with relevant configuration options and triggering setup at the end of ``cms_app
             'namespace': 'namespace',
             'config_fields': {'random_option': True},
             'config_translated_fields': {'app_title': 'app title', 'object_name': 'name'},
+            'sites': True,
         }
 
     apphook_pool.register(App4)
@@ -143,6 +144,9 @@ The behavior of the setup function can be customized by setting the following ke
   for non-translated fields.
 * ``config_translated_fields``: Fields used when creating the ApphookConfigModel instance;
   use this attribute for translated fields (currently only ``django-parler`` is supported).
+* ``sites``: List of site ids for which to create the pages; if set to ``True`` (the default value)
+  pages will be created for all sites. A single apphook config is created for all the sites;
+  instance is created only on first page creation.
 
 
 Notes on testing
