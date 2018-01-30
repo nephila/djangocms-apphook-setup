@@ -149,8 +149,8 @@ class AutoCMSAppMixin(object):
                             app_page, lang, cls.auto_setup['page title'], cls.__name__, home,
                             namespace, site=site
                         )
-                if get_url:
-                    TitleIndex.get_url = get_url
+        if get_url:
+            TitleIndex.get_url = get_url
 
     @classmethod
     def setup(cls):
