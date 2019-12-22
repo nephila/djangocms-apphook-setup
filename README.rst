@@ -8,11 +8,11 @@ Utility function to auto setup apphooks on project startup.
 
 Supported Django versions:
 
-* Django 1.8 to 1.11
+* Django 1.11 to 2.2
 
 Supported django CMS versions:
 
-* django CMS 3.4 to 3.5
+* django CMS 3.5, 3.6, 3.7
 
 Features
 --------

@@ -7,7 +7,6 @@ from cms.api import create_page, create_title
 from cms.models import Page, Site, warnings
 from cms.utils import get_language_list
 from django.utils.translation import override
-from djangocms_helper.utils import DJANGO_1_10
 
 from .base import BaseTest
 from .sample_app_1.cms_appconfig import AppConfig
@@ -294,8 +293,6 @@ class SetupApp5Test(SetupAppBaseTest):
 
         with warnings.catch_warnings(record=True) as w:
             __import__(self.module, fromlist=(str('cms_apps'),))
-        if DJANGO_1_10 and sys.version_info != (2, 7):
-            self.assertEqual(len(w), 3)
 
         # No setup is performed
         self.assertEqual(Page.objects.count(), 0)
