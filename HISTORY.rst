@@ -11,6 +11,7 @@ History
 * Add django CMS 3.6, 3.7 support
 * Drop Django < 1.11 support
 * Drop django CMS < 3.6 support
+* Fix monkey-patch not applied consistently
 
 0.3.0 (2018-01-15)
 ++++++++++++++++++
