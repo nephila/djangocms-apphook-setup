@@ -8,7 +8,7 @@ Unreleased
 
 * Nothing yet
 
-0.4.1 (unreleased)
+0.4.1 (2019-12-22)
 ++++++++++++++++++
 
 * Fix classifiers
