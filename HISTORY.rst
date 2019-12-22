@@ -4,7 +4,7 @@ History
 -------
 
 
-0.4.0 (unreleased)
+0.4.0 (2019-12-22)
 ++++++++++++++++++
 
 * Add Django 2.2 support
