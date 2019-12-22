@@ -1,4 +1,5 @@
 .PHONY: clean-pyc clean-build docs
+PYTHON = python
 
 help:
 	@echo "clean-build - remove build artifacts"
@@ -24,24 +25,24 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} +
 
 lint:
-	flake8 djangocms_apphook_setup tests
-	djangocms-helper djangocms_apphook_setup pyflakes --cms
+	tox -epep8,isort
 
 test:
-	djangocms-helper djangocms_apphook_setup test --cms --nose
+	python cms_helper.py djangocms_apphook_setup test
 
 test-all:
 	tox
 
 coverage:
 	coverage erase
-	coverage run `which djangocms-helper` djangocms_apphook_setup test --cms --nose
+	coverage run cms_helper.py djangocms_apphook_setup
 	coverage report -m
 
-release: clean
-	python setup.py clean --all sdist bdist_wheel
-	twine upload dist/*
 
 sdist: clean
 	python setup.py sdist
 	ls -l dist
+
+release: clean
+	python setup.py clean --all sdist bdist_wheel
+	python -mtwine upload dist/*
