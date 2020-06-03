@@ -7,4 +7,4 @@ flake8==3.8.2
 django-app-helper==2.2.2
 tox>=2.0
 wheel==0.34.2
-django-parler
+django-parler==2.0.1
