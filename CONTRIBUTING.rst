@@ -13,7 +13,7 @@ Types of Contributions
 Report Bugs
 ===========
 
-Report bugs at https://github.com/nephila/djangocms-appjook-setup/issues.
+Report bugs at https://github.com/nephila/djangocms-apphook-setup/issues.
 
 If you are reporting a bug, please include:
 
