@@ -9,4 +9,3 @@ Development Lead
 
 Contributors
 ------------
-

@@ -1,0 +1,2 @@
+tests/*
+djangocms_apphook_setup/migrations/*
