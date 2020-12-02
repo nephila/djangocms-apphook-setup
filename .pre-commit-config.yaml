@@ -40,14 +40,14 @@ repos:
           - flake8-tidy-imports
           - pep8-naming
   - repo: https://github.com/econchick/interrogate
-    rev: 1.3.1
+    rev: 1.3.2
     hooks:
       - id: interrogate
         args:
           - "-cpyproject.toml"
           - "--quiet"
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.7.3
+    rev: v2.7.4
     hooks:
       - id: pyupgrade
         args:
