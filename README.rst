@@ -2,20 +2,21 @@
 djangocms-apphook-setup
 =======================
 
-|Gitter| |PyPiVersion| |PyVersion| |Status| |TestCoverage| |CodeClimate| |License|
+|Gitter| |PyPiVersion| |PyVersion| |GAStatus| |TestCoverage| |CodeClimate| |License|
 
 Utility function to auto setup apphooks on project startup.
 
 Supported Django versions:
 
-* Django 1.11 to 2.2
+* Django: 2.2, 3.0, 3.1
 
 Supported django CMS versions:
 
-* django CMS 3.5, 3.6, 3.7
+* django CMS: 3.7, 3.8
 
+********
 Features
---------
+********
 
 The mixin included in this utility allows to automatically add an Apphook to a django CMS
 project on the first access to the website.
@@ -42,8 +43,9 @@ and added to the application page together with the Apphook.
           pages is faked; this is normally not an issues as the pages will be reindexed
           whenever the content is updated.
 
+*****
 Usage
------
+*****
 
 This utility can be used by extending the ``CMSApp`` class, adding the ``auto_setup`` attribute
 with relevant configuration options and triggering setup at the end of ``cms_app.py``::
@@ -70,9 +72,9 @@ with relevant configuration options and triggering setup at the end of ``cms_app
     # trigger djangocms-apphook-setup function
     App4.setup()
 
-
+********************************************
 Customizing ApphookConfig instances creation
---------------------------------------------
+********************************************
 
 While ``config_fields`` and ``config_translated_fields`` should cover most use cases when it comes
 to ApphookConfig instances creation, you may need more control over the process.
@@ -99,9 +101,9 @@ Default implementation::
 You can completely redefine the methods, provided you return an ApphookConfig instance
 in ``_create_config``.
 
-
+*********************
 Configuration options
----------------------
+*********************
 
 The behavior of the setup function can be customized by setting the following keys in the
 ``auto_setup`` attribute:
@@ -123,9 +125,9 @@ The behavior of the setup function can be customized by setting the following ke
   pages will be created for all sites. A single apphook config is created for all the sites;
   instance is created only on first page creation.
 
-
+****************
 Notes on testing
-----------------
+****************
 
 As this utility works by triggering setup function at import time, extra steps must be taken
 in the tests to unload the modules between the tests (this is only needed when testing the setup).
@@ -161,9 +163,9 @@ Example cleanup to be included in ``setUp`` method::
     :target: https://pypi.python.org/pypi/djangocms-apphook-setup
     :alt: Python versions
 
-.. |Status| image:: https://img.shields.io/travis/nephila/djangocms-apphook-setup.svg?style=flat-square
-    :target: https://travis-ci.org/nephila/djangocms-apphook-setup
-    :alt: Latest Travis CI build status
+.. |GAStatus| image:: https://github.com/nephila/djangocms-apphook-setup/workflows/Tox%20tests/badge.svg
+    :target: https://github.com/nephila/djangocms-apphook-setup
+    :alt: Latest CI build status
 
 .. |TestCoverage| image:: https://img.shields.io/coveralls/nephila/djangocms-apphook-setup/master.svg?style=flat-square
     :target: https://coveralls.io/r/nephila/djangocms-apphook-setup?branch=master
