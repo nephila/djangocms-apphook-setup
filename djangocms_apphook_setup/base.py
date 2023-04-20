@@ -4,7 +4,6 @@ from django.contrib.sites.models import Site
 
 
 class AutoCMSAppMixin:
-
     auto_setup = {
         "enabled": True,
         "home title": None,
