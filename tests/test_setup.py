@@ -48,7 +48,6 @@ class SetupAppBaseTest(BaseTest):
         apphook_pool.clear()
 
     def _setup_from_cmsapp(self, site_id=1, home_final=4, blog_final=2, configs_final=1, configs_init=0, pages_init=0):
-
         # Tests starts with a set of pages / configs
         self.assertEqual(Page.objects.count(), pages_init)
         if self.config:

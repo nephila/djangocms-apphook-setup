@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from .views import BaseView
 
 urlpatterns = [
-    url(r"^$", BaseView.as_view(), name="base-view-4"),
+    path("", BaseView.as_view(), name="base-view-4"),
 ]
