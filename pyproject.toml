@@ -8,7 +8,7 @@ target-version = ["py36"]
 include = 'djangocms_apphook_setup/*py'
 
 [tool.towncrier]
-package = "djangocms-apphook-setup"
+package = "djangocms_apphook_setup"
 directory = "changes"
 filename = "HISTORY.rst"
 title_format = "{version} ({project_date})"
